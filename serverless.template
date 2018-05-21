@@ -1,0 +1,377 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: AWS Serverless API that exposes the add, remove and get operations for
+  a blogging platform using Amazon DynamoDB.
+
+Parameters:
+  BlogTableName:
+    Type: String
+    Description: Table name to store all posts
+    Default: <blog table name>
+  UserTableName:
+    Type: String
+    Description: Table name to store all users
+    Default: <user table name>
+  ReadCapacity:
+    Type: Number
+    Description: Read capacity for the DynamoDB blog table.
+    Default: 3
+    MinValue: 1
+  WriteCapacity:
+    Type: Number
+    Description: Write capacity for the DynamoDB blog table.
+    Default: 3
+    MinValue: 1
+  Salt:
+    Type: String
+    Description: salt
+    Default: <unique phrase>
+  Issuer:
+    Type: String
+    Description: JWT iss
+    Default: <issuer>
+  Audience:
+    Type: String
+    Description: JWT aud
+    Default: <audience>
+  Secret:
+    NoEcho: true
+    Type: String
+    Description: JWT secrets
+    Default: <secret phrase>
+  Expire:
+    Type: Number
+    Description: JWT Exp
+    Default: 300
+    MinValue: 1
+    MaxValue: 3600
+
+Globals:
+  Api:
+    Cors:
+      AllowMethods: "'GET,POST,DELETE'"
+      # AllowMethods: Optional. String containing the HTTP methods to allow. 
+      # For example, "'GET,POST,DELETE'". If you omit this property, then SAM will automatically allow all the methods configured for each API. 
+      # Checkout [HTTP Spec](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Methods) more details on the value.
+
+      AllowHeaders: "'Auth,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,Startlower,Text,Access-Control-Allow-Headers,Access-Control-Allow-Origin'"
+      # For example, "'X-Forwarded-For'". Checkout [HTTP Spec](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Headers) for more details on the value
+
+      AllowOrigin: "'*'"
+      # For example, "'www.example.com'". Checkout [HTTP Spec](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin) for more details on this value.
+
+      #MaxAge: Optional. String containing the number of seconds to cache CORS Preflight request. 
+      # For example, "'600'" will cache request for 600 seconds. Checkout [HTTP Spec](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Max-Age) for more details on this value
+
+Resources:
+  GetBlogs:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: BlogApi::BlogApi.Functions::GetBlogsAsync
+      Runtime: dotnetcore2.0
+      CodeUri: ''
+      Description: Function to get a list of blogs
+      MemorySize: 256
+      Timeout: 30
+      Role: 
+      Policies:
+      - AWSLambdaFullAccess
+      Environment:
+        Variables:
+          BlogTable:
+            Ref: BlogTableName
+      Events:
+        PutResource:
+          Type: Api
+          Properties:
+            Path: "/blogs"
+            Method: GET
+  GetBlog:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: BlogApi::BlogApi.Functions::GetBlogAsync
+      Runtime: dotnetcore2.0
+      CodeUri: ''
+      Description: Function to get a single blog
+      MemorySize: 256
+      Timeout: 30
+      Role: 
+      Policies:
+      - AWSLambdaFullAccess
+      Environment:
+        Variables:
+          BlogTable:
+            Ref: BlogTableName
+      Events:
+        PutResource:
+          Type: Api
+          Properties:
+            Path: "/blogs/{Permalink}"
+            Method: GET
+  AddBlog:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: BlogApi::BlogApi.Functions::AddBlogAsync
+      Runtime: dotnetcore2.0
+      CodeUri: ''
+      Description: Function to get add a blog
+      MemorySize: 256
+      Timeout: 30
+      Role: 
+      Policies:
+      - AWSLambdaFullAccess
+      Environment:
+        Variables:
+          BlogTable:
+            Ref: BlogTableName
+      Events:
+        PutResource:
+          Type: Api
+          Properties:
+            Path: "/blogs"
+            Method: POST
+  RemoveBlog:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: BlogApi::BlogApi.Functions::RemoveBlogAsync
+      Runtime: dotnetcore2.0
+      CodeUri: ''
+      Description: Function to remove a blog
+      MemorySize: 256
+      Timeout: 30
+      Role: 
+      Policies:
+      - AWSLambdaFullAccess
+      Environment:
+        Variables:
+          BlogTable:
+            Ref: BlogTableName
+      Events:
+        PutResource:
+          Type: Api
+          Properties:
+            Path: "/blogs"
+            Method: DELETE
+  GetUsers:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: BlogApi::BlogApi.UsersFunctions::GetUsersAsync
+      Runtime: dotnetcore2.0
+      CodeUri: ''
+      Description: Function to get a list of users
+      MemorySize: 256
+      Timeout: 30
+      Role: 
+      Policies:
+      - AWSLambdaFullAccess
+      Environment:
+        Variables:
+          UserTable:
+            Ref: UserTableName
+      Events:
+        PutResource:
+          Type: Api
+          Properties:
+            Path: "/users"
+            Method: GET
+  GetUser:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: BlogApi::BlogApi.UsersFunctions::GetUserAsync
+      Runtime: dotnetcore2.0
+      CodeUri: ''
+      Description: Function to get a single user
+      MemorySize: 256
+      Timeout: 30
+      Role: 
+      Policies:
+      - AWSLambdaFullAccess
+      Environment:
+        Variables:
+          UserTable:
+            Ref: UserTableName
+      Events:
+        PutResource:
+          Type: Api
+          Properties:
+            Path: "/users/{Email}"
+            Method: GET
+  AddUser:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: BlogApi::BlogApi.UsersFunctions::AddUserAsync
+      Runtime: dotnetcore2.0
+      CodeUri: ''
+      Description: Function to get add a user
+      MemorySize: 256
+      Timeout: 30
+      Role: 
+      Policies:
+      - AWSLambdaFullAccess
+      Environment:
+        Variables:
+          UserTable:
+            Ref: UserTableName
+          Salt:
+            Ref: Salt
+      Events:
+        PutResource:
+          Type: Api
+          Properties:
+            Path: "/users"
+            Method: POST
+  RemoveUser:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: BlogApi::BlogApi.UsersFunctions::RemoveUserAsync
+      Runtime: dotnetcore2.0
+      CodeUri: ''
+      Description: Function to remove a user
+      MemorySize: 256
+      Timeout: 30
+      Role: 
+      Policies:
+      - AWSLambdaFullAccess
+      Environment:
+        Variables:
+          UserTable:
+            Ref: UserTableName
+      Events:
+        PutResource:
+          Type: Api
+          Properties:
+            Path: "/users"
+            Method: DELETE
+  UserLogin:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: BlogApi::BlogApi.UsersFunctions::UserLoginAsync
+      Runtime: dotnetcore2.0
+      CodeUri: ''
+      Description: Function to log user in and return a JWT token
+      MemorySize: 256
+      Timeout: 30
+      Role: 
+      Policies:
+      - AWSLambdaFullAccess
+      Environment:
+        Variables:
+          UserTable:
+            Ref: UserTableName
+          Issuer:
+            Ref: Issuer
+          Audience:
+            Ref: Audience
+          Secret:
+            Ref: Secret
+          Salt:
+            Ref: Salt
+          Expire:
+            Ref: Expire
+      Events:
+        PutResource:
+          Type: Api
+          Properties:
+            Path: "/login"
+            Method: POST
+  AuthMe:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: BlogApi::BlogApi.UsersFunctions::AuthUserAsync
+      Runtime: dotnetcore2.0
+      CodeUri: ''
+      Description: Function to get a user authenticated
+      MemorySize: 256
+      Timeout: 30
+      Role: 
+      Policies:
+      - AWSLambdaFullAccess
+      Environment:
+        Variables:
+          Issuer:
+            Ref: Issuer
+          Audience:
+            Ref: Audience
+          Secret:
+            Ref: Secret
+          Salt:
+            Ref: Salt
+          Expire:
+            Ref: Expire
+      Events:
+        PutResource:
+          Type: Api
+          Properties:
+            Path: "/me"
+            Method: GET
+  AuthLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: BlogApi::BlogApi.AuthFunctions::AuthLambda
+      Runtime: dotnetcore2.0
+      MemorySize: 256
+      Timeout: 30
+      Role:
+        Fn::GetAtt:
+        - LambdaRole
+        - Arn
+      Environment:
+        Variables:
+          Issuer:
+            Ref: Issuer
+          Audience:
+            Ref: Audience
+          Secret:
+            Ref: Secret
+          Salt:
+            Ref: Salt
+          Expire:
+            Ref: Expire
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+  BlogTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName:
+        Ref: BlogTableName
+      AttributeDefinitions:
+      - AttributeName: Permalink
+        AttributeType: S
+      KeySchema:
+      - AttributeName: Permalink
+        KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits:
+          Ref: ReadCapacity
+        WriteCapacityUnits:
+          Ref: WriteCapacity
+  UserTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName:
+        Ref: UserTableName
+      AttributeDefinitions:
+      - AttributeName: Email
+        AttributeType: S
+      KeySchema:
+      - AttributeName: Email
+        KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits:
+          Ref: ReadCapacity
+        WriteCapacityUnits:
+          Ref: WriteCapacity
