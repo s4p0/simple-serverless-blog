@@ -6,6 +6,8 @@ A simple AWS Serverless (SAM) blog created based on [Amazon DynamoDB Blog API](h
 
 > **NOTE** This template will generate an AWS API Gateway and its lambda methods. However, it does not set the lambda authorizer, so anyone with your URL would be able to create a post/user
 
+> **NOTE-2** Currently, the user's password will be stored as `email` + `password` + `secret`. So, don't use it as production or implement a ~~better~~ `crypt`. (I'll do that later on.)
+
 * Install [.NETCore 2.0](https://www.microsoft.com/net/download/windows)
 * Install [AWS SDK for .NET](https://aws.amazon.com/sdk-for-net/)
 
@@ -55,11 +57,29 @@ Once published, you'are ~~all set~~ almost done.
 
 * Once the you finish the **_requests setup_**, go to:
 
-  > each resource **[/...]**
+  > for each resource **[/...]**
 
   * **Actions** > **Deploy API** > _[choose a stage name]_
 
 * Now you are done!
+
+## Who came first, the :hatched_chick: or the :egg: ?
+
+Before you set an `Authorizer` for `/users` [`POST`], it is recommended to create an `Admin` user.
+
+```HTTP
+POST /prod/users HTTP/1.1
+Host: <your api url>
+Content-Type: application/json
+Cache-Control: no-cache
+Postman-Token: 25d0a1c0-7476-c8f8-5671-a4b5a9140eb4
+{
+  "name": "Felipe Correa",
+  "email": "felipe.correa (at) (google's Mail).com",
+  "password": "my secure passwrod",
+  "isAdmin": true
+}
+```
 
 #
 
