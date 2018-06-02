@@ -69,7 +69,7 @@ Resources:
   GetBlogs:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: BlogApi::BlogApi.Functions::GetBlogsAsync
+      Handler: BlogApi::BlogApi.Functions.Manager.BlogManager::GetBlogsAsync
       Runtime: dotnetcore2.0
       CodeUri: ''
       Description: Function to get a list of blogs
@@ -91,7 +91,7 @@ Resources:
   GetBlog:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: BlogApi::BlogApi.Functions::GetBlogAsync
+      Handler: BlogApi::BlogApi.Functions.Manager.BlogManager::GetBlogAsync
       Runtime: dotnetcore2.0
       CodeUri: ''
       Description: Function to get a single blog
@@ -113,7 +113,7 @@ Resources:
   AddBlog:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: BlogApi::BlogApi.Functions::AddBlogAsync
+      Handler: BlogApi::BlogApi.Functions.Manager.BlogManager::AddBlogAsync
       Runtime: dotnetcore2.0
       CodeUri: ''
       Description: Function to get add a blog
@@ -135,7 +135,7 @@ Resources:
   RemoveBlog:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: BlogApi::BlogApi.Functions::RemoveBlogAsync
+      Handler: BlogApi::BlogApi.Functions.Manager.BlogManager::RemoveBlogAsync
       Runtime: dotnetcore2.0
       CodeUri: ''
       Description: Function to remove a blog
@@ -157,7 +157,7 @@ Resources:
   GetUsers:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: BlogApi::BlogApi.UsersFunctions::GetUsersAsync
+      Handler: BlogApi::BlogApi.Functions.Manager.UserManager::GetUsersAsync
       Runtime: dotnetcore2.0
       CodeUri: ''
       Description: Function to get a list of users
@@ -179,7 +179,7 @@ Resources:
   GetUser:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: BlogApi::BlogApi.UsersFunctions::GetUserAsync
+      Handler: BlogApi::BlogApi.Functions.Manager.UserManager::GetUserAsync
       Runtime: dotnetcore2.0
       CodeUri: ''
       Description: Function to get a single user
@@ -201,7 +201,7 @@ Resources:
   AddUser:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: BlogApi::BlogApi.UsersFunctions::AddUserAsync
+      Handler: BlogApi::BlogApi.Functions.Manager.UserManager::AddUserAsync
       Runtime: dotnetcore2.0
       CodeUri: ''
       Description: Function to get add a user
@@ -225,7 +225,7 @@ Resources:
   RemoveUser:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: BlogApi::BlogApi.UsersFunctions::RemoveUserAsync
+      Handler: BlogApi::BlogApi.Functions.Manager.UserManager::RemoveUserAsync
       Runtime: dotnetcore2.0
       CodeUri: ''
       Description: Function to remove a user
@@ -247,7 +247,7 @@ Resources:
   UserLogin:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: BlogApi::BlogApi.UsersFunctions::UserLoginAsync
+      Handler: BlogApi::BlogApi.Functions.Manager.UserManager::UserLoginAsync
       Runtime: dotnetcore2.0
       CodeUri: ''
       Description: Function to log user in and return a JWT token
@@ -279,7 +279,7 @@ Resources:
   AuthMe:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: BlogApi::BlogApi.UsersFunctions::AuthUserAsync
+      Handler: BlogApi::BlogApi.Functions.Manager.AuthManager::AuthLambda
       Runtime: dotnetcore2.0
       CodeUri: ''
       Description: Function to get a user authenticated
