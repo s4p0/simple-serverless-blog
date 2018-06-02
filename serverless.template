@@ -279,7 +279,7 @@ Resources:
   AuthMe:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: BlogApi::BlogApi.Functions.Manager.AuthManager::AuthLambda
+      Handler: BlogApi::BlogApi.Functions.Manager.AuthManager::AuthUserAsync
       Runtime: dotnetcore2.0
       CodeUri: ''
       Description: Function to get a user authenticated
@@ -309,7 +309,7 @@ Resources:
   AuthLambda:
     Type: AWS::Lambda::Function
     Properties:
-      Handler: BlogApi::BlogApi.AuthFunctions::AuthLambda
+      Handler: BlogApi::BlogApi.Functions.Manager.AuthManager::AuthLambda
       Runtime: dotnetcore2.0
       MemorySize: 256
       Timeout: 30
