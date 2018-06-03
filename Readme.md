@@ -10,6 +10,8 @@ A simple AWS Serverless (SAM) blog created based on [Amazon DynamoDB Blog API](h
 
 * Install [.NETCore 2.0](https://www.microsoft.com/net/download/windows)
 * Install [AWS SDK for .NET](https://aws.amazon.com/sdk-for-net/)
+* Install [AWS Templates for .NET](https://github.com/aws/aws-lambda-dotnet#dotnet-cli-templates) 
+  * ` dotnet new -i Amazon.Lambda.Templates::* `
 
 And, change `serverless.template` parameters
 
