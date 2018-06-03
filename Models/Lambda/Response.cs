@@ -24,7 +24,7 @@ namespace BlogApi.Models.Lambda
       return new APIGatewayProxyResponse
       {
         StatusCode = (int)status,
-        Body = JsonConvert.SerializeObject(new object()),
+        Body = JsonConvert.SerializeObject(bodyObj),
         Headers = new Dictionary<string, string>
         {
           { "Content-Type", "application/json" },
